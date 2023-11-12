@@ -9,9 +9,36 @@ if(isset($_SESSION['userName'])){
     $do = '';
     $do = isset($_GET['do'])? $_GET['do']: 'main';
 
-    if($do == 'main'){
-        echo 'this is main page';
-    }
+    if($do == 'main'){?>
+        
+        <h1 class="bg-danger text-center p-4 text-white" >Manage Users</h1>
+        <a class="text-center btn btn-primary text-white d-block m-auto w-25 font-weight-bold" href="users.php?do=add">Add New User + </a>
+
+        <table class="table table-hover table-striped table-bordered text-center w-75 m-auto">
+            <tr>
+                <th>ID</th>
+                <th>User name</th>
+                <th>Email</th>
+                <th>Full name</th>
+                <th>Registered date</th>
+                <th>Type</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr>
+               <td>2</td> 
+               <td>omar</td> 
+               <td>omar.o@mail.com</td> 
+               <td>omar moataz</td> 
+               <td>2023-10-24</td> 
+               <td>user</td> 
+               <td><a href=""><i class='fa fa-edit text-info'></i></a></td> 
+               <td><a href=""><i class='fa fa-trash text-danger'></i></a></td> 
+            </tr>
+        </table>
+<?php   }elseif($do == 'add'){
+    echo 'add';
+}
     //edit page
     elseif($do == 'edit'){
         //check if id exict and numeric
@@ -74,7 +101,7 @@ if(isset($_SESSION['userName'])){
             $stmt = $db->prepare("UPDATE users SET name =? ,password=?, email=?, full_name=? WHERE id=?");
             $stmt->execute(array($name,$hpass,$email,$full,$id));
 
-            echo "<h1 clas='alert alert-success'> user updated </h1>";
+            echo '<h1 clas="alert alert-success"> user updated </h1>';
 
         }else{
             echo 'you cant browes this page';

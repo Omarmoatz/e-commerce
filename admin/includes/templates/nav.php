@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg bg-black">
 
     <div class="container-fluid">
-      <a class="navbar-brand text-white" href="index.php">Home</a>
+      <a class="navbar-brand text-white" href="users.php?do=main">Home</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
