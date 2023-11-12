@@ -46,23 +46,30 @@ if(isset($_SESSION['userName'])){
                <td>2023-10-24</td> 
                <td><?= $group_id ?></td> 
                <td><a href="users.php?do=edit&id=<?= $id ?>"><i class='fa fa-edit text-info'></i></a></td> 
-               <td><a href=""><i class='fa fa-trash text-danger'></i></a></td> 
+               <td><a href="users.php?do=delete&id=<?= $id ?>"><i class='fa fa-trash text-danger'></i></a></td> 
             </tr>
             <?php endforeach; ?>
         </table>
+        <!-- add page -->
 <?php   }elseif($do == 'add'){ 
+    $nameError = $passErorr = $emailEror = $fullErorr = '';
+    $name = $pass = $email = $full ='';
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $nameError = $passErorr = $emailEror = $fullErorr = '';
-        $name = $pass = $email = $full ='';
-        
+
         if(empty($_POST['username'])){
             $nameError = 'name is required';
         }else{
-            $name = $_POST['username'];}
+            $name = $_POST['username'];
+            if(strlen($name)<4){
+                $nameError = 'name should be longer than 4 letter';
+            }elseif(strlen($name)>15){
+                $nameError = 'name should be less than 15 letter';
+            }
+        }
         //check password
         if(empty($_POST['password'])){
-            $passError = 'password is required';
+            $passErorr = 'password is required';
         }else{
             $pass = $_POST['password'];
             $hpass = sha1($pass);
@@ -71,12 +78,14 @@ if(isset($_SESSION['userName'])){
         if(empty($_POST['email'])){
             $emailEror = 'email is required';
         }else{
-            $email = $_POST['email'];}        
+            $email = $_POST['email'];
+        }        
         //check full_name
         if(empty($_POST['full'])){
             $fullErorr = 'full name is required';
         }else{
-            $full = $_POST['full']; }  
+            $full = $_POST['full']; 
+        }  
         
         //check if there's any error or not
         if(empty($nameError) && empty($passErorr) && empty($emailEror) && empty($fullErorr)){
@@ -87,26 +96,30 @@ if(isset($_SESSION['userName'])){
             $stmt->bindParam(':full',$full);
     
             $stmt->execute();
-    
-            echo "<h1 class='alert alert-success'> user added successfully </h1>";
+        
+            redirect('success','user added successfully',2);
         }
     } 
     ?>
     <form id = 'editForm' action="" method="POST">
         <h3>Add member</h3>
 
+        <span class=" text-danger"><?= $nameError?> </span><br>
         <label for="username">User Name</label>
-        <input type="text" name="username" id="username" placeholder="enter your username">
-        <span class=" text-danger"><?= $nameError ?> </span><br>
-
+        <input type="text" name="username" id="username" value="<?= $name?>" placeholder="enter your username">
+        
+        <span class=" text-danger"><?= $passErorr?> </span><br>
         <label for="password">Password</label>
-        <input type="password" name="password" id="password"  placeholder="enter password">
-
+        <input type="password" name="password" id="password" value="<?= $pass?>" placeholder="enter password">
+        
+        <span class=" text-danger"><?= $emailEror?> </span><br>
         <label for="email">email</label>
-        <input type="email" name="email" id="email"  placeholder="enter email">
-
+        <input type="email" name="email" id="email" value="<?= $email?>" placeholder="enter email">
+        
+        <span class=" text-danger"><?= $fullErorr?> </span><br>
         <label for="full">full name</label>
-        <input type="text" name="full" id="full"  placeholder="enter full name">
+        <input type="text" name="full" id="full" value="<?= $full?>" placeholder="enter full name">
+        
 
         <input type="submit" name="add" value="Add User" >
     </form>
@@ -173,11 +186,26 @@ if(isset($_SESSION['userName'])){
             $stmt = $db->prepare("UPDATE users SET name =? ,password=?, email=?, full_name=? WHERE id=?");
             $stmt->execute(array($name,$hpass,$email,$full,$id));
 
-            echo '<h1 clas="alert alert-success"> user updated </h1>';
-
+            
+            redirect( 'success','user updated successfully',2);
         }else{
-            echo 'you cant browes this page';
+            redirect('danger','you cant browes this page',2);
         }
+    }elseif($do='delete'){
+        $id = $_GET['id'];
+
+        if($id==1){
+            redirect('danger','You Cant Delete This User',2);
+            
+        }else{
+            $stmt =$db->prepare("DELETE FROM `users` WHERE id=:id");
+            $stmt->bindParam(':id' , $id);
+            $stmt->execute();
+            
+            redirect('danger','User Deleted Successfully',2);
+            //echo " <h2 class='alert alert-success'> User Deleted Successfully </h2>";
+        }
+
     }
     else{
         echo 'eror';

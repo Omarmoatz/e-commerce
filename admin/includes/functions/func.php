@@ -14,6 +14,13 @@ function setTitle(){
         echo 'default';
     }
 }
+/*
+v 1.0
+*/
+function redirect($class,$msg,$sec=2){
+    echo "<h2 class='alert alert-$class'> $msg</h2> ";
+    echo "<h2 class='alert alert-info'> You Will  Be Redirect After $sec seconds </h2> ";
 
-
+    header("refresh:$sec;url=users.php");
+}
 ?>

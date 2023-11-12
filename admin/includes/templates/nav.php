@@ -22,10 +22,6 @@
             <a class="nav-link text-white" href="#">Pricing</a>
           </li>
 
-          <li class="nav-item">
-            <a class="nav-link text-white" href="users.php?do=edit&id=<?php echo $_SESSION['id'] ?>">edit</a>
-          </li>
-
         </ul>
 
         <span class="navbar-text">
