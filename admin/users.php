@@ -9,7 +9,13 @@ if(isset($_SESSION['userName'])){
     $do = '';
     $do = isset($_GET['do'])? $_GET['do']: 'main';
 
-    if($do == 'main'){?>
+    if($do == 'main'){
+        
+        $stmt = $db->prepare("SELECT *FROM `users`");
+        $stmt->execute();
+        $row = $stmt->fetchAll();
+        
+        ?>
         
         <h1 class="bg-danger text-center p-4 text-white" >Manage Users</h1>
         <a class="text-center btn btn-primary text-white d-block m-auto w-25 font-weight-bold" href="users.php?do=add">Add New User + </a>
@@ -25,16 +31,24 @@ if(isset($_SESSION['userName'])){
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
+            <?php foreach($row as $x):
+                $id = $x['id']; 
+                $name = $x['name']; 
+                $email = $x['email']; 
+                $full_name = $x['full_name']; 
+                $group_id = $x['group_id'] ==1 ? 'admin':'user'; 
+                ?>
             <tr>
-               <td>2</td> 
-               <td>omar</td> 
-               <td>omar.o@mail.com</td> 
-               <td>omar moataz</td> 
+               <td><?= $id ?></td> 
+               <td><?= $name ?></td> 
+               <td><?= $email ?></td> 
+               <td><?= $full_name ?></td> 
                <td>2023-10-24</td> 
-               <td>user</td> 
-               <td><a href=""><i class='fa fa-edit text-info'></i></a></td> 
+               <td><?= $group_id ?></td> 
+               <td><a href="users.php?do=edit&id=<?= $id ?>"><i class='fa fa-edit text-info'></i></a></td> 
                <td><a href=""><i class='fa fa-trash text-danger'></i></a></td> 
             </tr>
+            <?php endforeach; ?>
         </table>
 <?php   }elseif($do == 'add'){
     echo 'add';
