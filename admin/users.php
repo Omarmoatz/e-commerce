@@ -50,9 +50,46 @@ if(isset($_SESSION['userName'])){
             </tr>
             <?php endforeach; ?>
         </table>
-<?php   }elseif($do == 'add'){
-    echo 'add';
-}
+<?php   }elseif($do == 'add'){ 
+
+    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+        $name = $_POST['username'];
+        $pass = $_POST['password'];
+        $hpass = sha1($pass);
+        $full = $_POST['full']; 
+        $email = $_POST['email']; 
+
+        $stmt =$db->prepare("INSERT INTO `users`(name,password,email,full_name)VALUES(:username,:password,:email,:full)");
+        $stmt->bindParam(':username',$name);
+        $stmt->bindParam(':password',$hpass);
+        $stmt->bindParam(':email',$email);
+        $stmt->bindParam(':full',$full);
+
+        $stmt->execute();
+
+        echo "<h1 class='alert alert-success'> user added successfully </h1>";
+
+    } 
+    ?>
+    <form id = 'editForm' action="" method="POST">
+        <h3>Add member</h3>
+
+        <label for="username">User Name</label>
+        <input type="text" name="username" id="username" placeholder="enter your username">  >
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password"  placeholder="enter password">
+
+        <label for="email">email</label>
+        <input type="email" name="email" id="email"  placeholder="enter email">
+
+        <label for="full">full name</label>
+        <input type="text" name="full" id="full"  placeholder="enter full name">
+
+        <input type="submit" name="add" value="Add User" >
+    </form>
+<?php   }
     //edit page
     elseif($do == 'edit'){
         //check if id exict and numeric
