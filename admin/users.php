@@ -25,6 +25,9 @@ if(isset($_SESSION['userName'])){
         $userName = $row['name'];
         $email = $row['email'];
         $fullName = $row['full_name'];
+        //get the old pass from
+        $password = $row['password'];
+
 
         if($count>0){        
             ?>
@@ -37,7 +40,8 @@ if(isset($_SESSION['userName'])){
             <input type="hidden" name= "id" value="<?= $userId ?>" >
 
             <label for="password">password</label>
-            <input type="password" name="password" id="password"  placeholder="enter password">
+            <input type="hidden" name= "oldPasword" value="<?= $password ?>" >
+            <input type="password" name="newPassword" id="password"  placeholder="enter password">
 
             <label for="email">email</label>
             <input type="email" name="email" id="email" value="<?= $email ?>" placeholder="enter email">
@@ -59,9 +63,16 @@ if(isset($_SESSION['userName'])){
             $name = $_POST['userName'];
             $email = $_POST['email'];
             $full = $_POST['full'];
-            
-            $stmt = $db->prepare("UPDATE users SET name =? , email=?, full_name=? WHERE id=?");
-            $stmt->execute(array($name,$email,$full,$id));
+
+            $pass = '';
+            if(empty($_POST['newPassword'])){
+                $pass = $_POST['oldPasword'];
+            }else{
+                $pass = $_POST['newPassword'];
+            }
+            $hpass = sha1($pass);         
+            $stmt = $db->prepare("UPDATE users SET name =? ,password=?, email=?, full_name=? WHERE id=?");
+            $stmt->execute(array($name,$hpass,$email,$full,$id));
 
             echo "<h1 clas='alert alert-success'> user updated </h1>";
 
