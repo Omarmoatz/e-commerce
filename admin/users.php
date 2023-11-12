@@ -53,30 +53,51 @@ if(isset($_SESSION['userName'])){
 <?php   }elseif($do == 'add'){ 
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
-        $name = $_POST['username'];
-        $pass = $_POST['password'];
-        $hpass = sha1($pass);
-        $full = $_POST['full']; 
-        $email = $_POST['email']; 
-
-        $stmt =$db->prepare("INSERT INTO `users`(name,password,email,full_name)VALUES(:username,:password,:email,:full)");
-        $stmt->bindParam(':username',$name);
-        $stmt->bindParam(':password',$hpass);
-        $stmt->bindParam(':email',$email);
-        $stmt->bindParam(':full',$full);
-
-        $stmt->execute();
-
-        echo "<h1 class='alert alert-success'> user added successfully </h1>";
-
+        $nameError = $passErorr = $emailEror = $fullErorr = '';
+        $name = $pass = $email = $full ='';
+        
+        if(empty($_POST['username'])){
+            $nameError = 'name is required';
+        }else{
+            $name = $_POST['username'];}
+        //check password
+        if(empty($_POST['password'])){
+            $passError = 'password is required';
+        }else{
+            $pass = $_POST['password'];
+            $hpass = sha1($pass);
+        } 
+        //check email
+        if(empty($_POST['email'])){
+            $emailEror = 'email is required';
+        }else{
+            $email = $_POST['email'];}        
+        //check full_name
+        if(empty($_POST['full'])){
+            $fullErorr = 'full name is required';
+        }else{
+            $full = $_POST['full']; }  
+        
+        //check if there's any error or not
+        if(empty($nameError) && empty($passErorr) && empty($emailEror) && empty($fullErorr)){
+            $stmt =$db->prepare("INSERT INTO `users`(name,password,email,full_name)VALUES(:username,:password,:email,:full)");
+            $stmt->bindParam(':username',$name);
+            $stmt->bindParam(':password',$hpass);
+            $stmt->bindParam(':email',$email);
+            $stmt->bindParam(':full',$full);
+    
+            $stmt->execute();
+    
+            echo "<h1 class='alert alert-success'> user added successfully </h1>";
+        }
     } 
     ?>
     <form id = 'editForm' action="" method="POST">
         <h3>Add member</h3>
 
         <label for="username">User Name</label>
-        <input type="text" name="username" id="username" placeholder="enter your username">  >
+        <input type="text" name="username" id="username" placeholder="enter your username">
+        <span class=" text-danger"><?= $nameError ?> </span><br>
 
         <label for="password">Password</label>
         <input type="password" name="password" id="password"  placeholder="enter password">
