@@ -1,12 +1,7 @@
 <?php
 
 $do = '';
-
-if(isset($_GET['do'])){
-    $do= $_GET['do'];
-}else{
-    $do = 'main';
-}
+do = isset($_GET['do'])?$_GET['do']:$do = 'main';
 
 if($do == 'main'){
     echo 'this is main page';

@@ -23,4 +23,18 @@ function redirect($class,$msg,$sec=2){
 
     header("refresh:$sec;url=users.php");
 }
+
+/*
+v 1.0
+check database function
+
+*/
+
+function checkDb($col,$table,$value){
+    global $db;
+    $check = $db->prepare("SELECT $col FROM $table WHERE $col=?");
+    $check->execute(array($value));
+    $count = $check->rowCount();
+    return $count;
+}
 ?>

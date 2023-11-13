@@ -8,7 +8,7 @@ if(isset($_SESSION['userName'])){
 
     $do = '';
     $do = isset($_GET['do'])? $_GET['do']: 'main';
-
+    //main page/////////////////////////////////////////////////////////////
     if($do == 'main'){
         
         $stmt = $db->prepare("SELECT *FROM `users`");
@@ -36,27 +36,28 @@ if(isset($_SESSION['userName'])){
                 $name = $x['name']; 
                 $email = $x['email']; 
                 $full_name = $x['full_name']; 
-                $group_id = $x['group_id'] ==1 ? 'admin':'user'; 
+                $group_id = $x['group_id'] ==1 ? 'admin':'user';
+                $reg_date = $x['reg_date']; 
                 ?>
             <tr>
                <td><?= $id ?></td> 
                <td><?= $name ?></td> 
                <td><?= $email ?></td> 
                <td><?= $full_name ?></td> 
-               <td>2023-10-24</td> 
-               <td><?= $group_id ?></td> 
+               <td><?= $full_name ?></td> 
+               <td><?= $reg_date ?></td> 
                <td><a href="users.php?do=edit&id=<?= $id ?>"><i class='fa fa-edit text-info'></i></a></td> 
                <td><a href="users.php?do=delete&id=<?= $id ?>"><i class='fa fa-trash text-danger'></i></a></td> 
             </tr>
             <?php endforeach; ?>
         </table>
-        <!-- add page -->
+        <!-- add page //////////////////////////////////////////////////////-->
 <?php   }elseif($do == 'add'){ 
     $nameError = $passErorr = $emailEror = $fullErorr = '';
     $name = $pass = $email = $full ='';
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
-
+        //check name
         if(empty($_POST['username'])){
             $nameError = 'name is required';
         }else{
@@ -89,15 +90,24 @@ if(isset($_SESSION['userName'])){
         
         //check if there's any error or not
         if(empty($nameError) && empty($passErorr) && empty($emailEror) && empty($fullErorr)){
-            $stmt =$db->prepare("INSERT INTO `users`(name,password,email,full_name)VALUES(:username,:password,:email,:full)");
-            $stmt->bindParam(':username',$name);
-            $stmt->bindParam(':password',$hpass);
-            $stmt->bindParam(':email',$email);
-            $stmt->bindParam(':full',$full);
-    
-            $stmt->execute();
+
+            $checkUserName = checkDb('name','users',$name);
+
+            if($checkUserName>0){
+                redirect('danger','Sorry, This User Already Exists');
+            }else{
+                $stmt =$db->prepare("INSERT INTO 
+                `users`(name,password,email,full_name,reg_date)
+                VALUES(:username,:password,:email,:full,now())");
+                $stmt->bindParam(':username',$name);
+                $stmt->bindParam(':password',$hpass);
+                $stmt->bindParam(':email',$email);
+                $stmt->bindParam(':full',$full);
         
-            redirect('success','user added successfully',2);
+                $stmt->execute();
+            
+                redirect('success','user added successfully',2);
+            }
         }
     } 
     ?>
@@ -124,7 +134,7 @@ if(isset($_SESSION['userName'])){
         <input type="submit" name="add" value="Add User" >
     </form>
 <?php   }
-    //edit page
+    //edit page////////////////////////////////////////////////////////////////
     elseif($do == 'edit'){
         //check if id exict and numeric
         $userId = isset($_GET['id']) && is_numeric($_GET['id'])? intval($_GET['id']):0; 
@@ -167,7 +177,7 @@ if(isset($_SESSION['userName'])){
         }else{
         echo 'sorry no user found';
         }  
-    //THIS IS UPDATE PAGE  
+    //THIS IS UPDATE PAGE //////////////////////////////////////////////////////////// 
     }elseif($do == 'update'){
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
@@ -191,6 +201,7 @@ if(isset($_SESSION['userName'])){
         }else{
             redirect('danger','you cant browes this page',2);
         }
+    // delete page //////////////////////////////////////////////////////////////
     }elseif($do='delete'){
         $id = $_GET['id'];
 
