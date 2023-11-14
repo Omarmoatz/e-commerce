@@ -10,7 +10,95 @@ if(isset($_SESSION['userName'])){
     $do = isset($_GET['do'])?$_GET['do']:'main';
 
     if($do == 'main'){
-        echo 'this is main page';
+
+        $stmt = $db->prepare("SELECT products.* ,
+        categories.name AS cat_name ,
+        users.name AS user_name 
+        FROM products
+        INNER JOIN categories ON categories.id = products.cat_id
+        INNER JOIN users on users.id = products.user_id");
+        $stmt->execute();
+        $row = $stmt->fetchAll();
+        
+        ?>
+        <h1 class="bg-success text-center p-4 text-white" >Manage Products</h1>
+        <a class="text-center btn btn-primary text-white d-block m-auto w-25 font-weight-bold" 
+        href="products.php?do=add">Add New Prduct + </a>
+
+        <table class="table table-hover table-striped table-bordered text-center w-75 m-auto ">
+            <tr>
+                <th>ID</th>
+                <th>title</th>
+                <th>description</th>
+                <th>price</th>
+                <th>added date</th>
+                <th>country</th>
+                <th>image</th>
+                <th>rating</th>
+                <th>status</th>
+                <th>regester status</th>
+                <th>cat name</th>
+                <th>user name</th>
+                <th>edit</th>
+                <th>delete</th>
+            </tr>
+            <?php foreach($row as $x):
+                $id = $x['id']; 
+                $title = $x['title']; 
+                $desc = $x['des']; 
+                $price = $x['price']; 
+                $date = $x['added_date'];
+                $country = $x['country'];
+                $image = $x['image'];
+                $rating = $x['rating'];
+                $status = $x['status'];
+                $reg_status = $x['reg_status'];
+                $cat_name = $x['cat_name'];
+                $user_name = $x['user_name'];
+
+                ?>
+            <tr>
+               <td><?= $id ?></td> 
+               <td><?= $title ?></td> 
+               <td><?= $desc ?></td> 
+               <td><?= $price ?></td> 
+               <td><?= $date ?></td> 
+               <td><?= $country ?></td> 
+               <td>
+                    <img width='50' src="<?php echo '../layouts/images/'.$image ?>" alt="">
+               </td> 
+               <td>
+                  <?php
+                    if($rating ==1){echo '*';}
+                    elseif($rating ==2){echo '**';}
+                    elseif($rating ==3){echo '***';}
+                    elseif($rating ==4){echo '****';}
+                    else{echo '*****';}
+                  ?>  
+               </td> 
+               <td>
+               <?php
+                    if($status ==1){echo 'new';}
+                    elseif($status ==2){echo 'normal';}
+                    else{echo 'old';}
+                  ?>
+               </td> 
+               <td>
+               <?php
+                    if($reg_status ==0){echo 'active';}
+                    else{echo 'not active';}
+                  ?>
+               </td> 
+               <td><?= $cat_name ?></td> 
+               <td><?= $user_name ?></td> 
+               <td><a href="products.php?do=edit&id=<?= $id ?>"><i class='fa fa-edit text-info'></i></a></td> 
+               <td><a href="products.php?do=delete&id=<?= $id ?>"><i class='fa fa-trash text-danger'></i></a></td> 
+            </tr>
+            <?php endforeach; ?>
+        </table>
+
+
+    <?php
     }
     //add page/////////////////////////////////////////////////////
     elseif($do == 'add'){
