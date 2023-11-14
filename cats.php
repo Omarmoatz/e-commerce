@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 include 'init.php';
 $id = $_GET['id'];
 $name = $_GET['name'];

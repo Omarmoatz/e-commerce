@@ -33,3 +33,14 @@
     </div>
   </nav>
 </section>
+<?php
+if(isset($_SESSION['user'])){
+  echo 'welcom '.$_SESSION['user'];
+}else{?>
+  <section id="new nav" class="text-left mt-3 pr-5">
+  <a class="btn btn-dark text-white px-3" href="login.php">login</a>
+  <a class="btn btn-dark text-white px-3" href="reg.php">regester</a>
+</section>
+<?php
+}
+?>
