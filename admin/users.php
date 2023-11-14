@@ -106,7 +106,7 @@ if(isset($_SESSION['userName'])){
         
                 $stmt->execute();
             
-                redirect('success','user added successfully',2);
+                redirect('success','user added successfully','users.php',2);
             }
         }
     } 
@@ -175,7 +175,8 @@ if(isset($_SESSION['userName'])){
         </form>
 <?php 
         }else{
-        echo 'sorry no user found';
+            redirect('danger','sorry no user found','users.php',2);
+
         }  
     //THIS IS UPDATE PAGE //////////////////////////////////////////////////////////// 
     }elseif($do == 'update'){
@@ -197,29 +198,30 @@ if(isset($_SESSION['userName'])){
             $stmt->execute(array($name,$hpass,$email,$full,$id));
 
             
-            redirect( 'success','user updated successfully',2);
+            redirect( 'success','user updated successfully','users.php',2);
         }else{
-            redirect('danger','you cant browes this page',2);
+            redirect('danger','you cant browes this page','users.php',2);
         }
     // delete page //////////////////////////////////////////////////////////////
     }elseif($do='delete'){
         $id = $_GET['id'];
 
         if($id==1){
-            redirect('danger','You Cant Delete This User',2);
+            redirect('danger','You Cant Delete This User','users.php',2);
             
         }else{
             $stmt =$db->prepare("DELETE FROM `users` WHERE id=:id");
             $stmt->bindParam(':id' , $id);
             $stmt->execute();
             
-            redirect('danger','User Deleted Successfully',2);
+            redirect('danger','User Deleted Successfully','users.php',2);
             //echo " <h2 class='alert alert-success'> User Deleted Successfully </h2>";
         }
 
     }
     else{
-        echo 'eror';
+        redirect('danger','no such apage','dashboard.php',2);
+
     }
 
     include $tpl.'footer.php';

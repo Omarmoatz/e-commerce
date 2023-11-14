@@ -7,6 +7,7 @@ $tpl ='includes/templates/';
 $css = 'layouts/css/';
 $js = 'layouts/js/';
 $func = 'includes/functions/';
+$imgs = '../layouts/images/';
 
 //{{includes}}
 

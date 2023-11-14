@@ -14,14 +14,20 @@
 input[type=submit]{
     margin-top: 15px;
 }
+
 #editForm{
     width: 80%;
     margin: 80px auto 0px;
 }
-
 #editForm input[type=text], input[type=password], input[type=email]{
     display: block;
     margin: auto;
     margin-top: 10px;
     width: 40%;
+}
+
+#addProduct label{
+    font-size: 20px;
+    display: inline-block;
+    width: 95px;
 }
