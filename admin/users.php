@@ -94,7 +94,7 @@ if(isset($_SESSION['userName'])){
             $checkUserName = checkDb('name','users',$name);
 
             if($checkUserName>0){
-                redirect('danger','Sorry, This User Already Exists');
+                redirect('danger','Sorry, This User Already Exists','users.php?do=add');
             }else{
                 $stmt =$db->prepare("INSERT INTO 
                 `users`(name,password,email,full_name,reg_date)
@@ -221,7 +221,6 @@ if(isset($_SESSION['userName'])){
     }
     else{
         redirect('danger','no such apage','dashboard.php',2);
-
     }
 
     include $tpl.'footer.php';

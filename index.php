@@ -8,7 +8,7 @@ if(isset($_SESSION['user'])){
     $stmt = $db->prepare("SELECT id FROM users");
     $stmt->execute();
     $userCount = $stmt->rowCount();
-    
+
     ?>
     <section id='dashboard' >
         <div class="container">
@@ -17,7 +17,7 @@ if(isset($_SESSION['user'])){
 
                 <div class="col-4">
                     <div class="bg-primary text-center text-white p-3 rounded ">
-                        <p>Total Members</p>
+                        <p>Total Products</p>
                         <span class=" timer display-3" data-from="0" data-to="<?= $userCount ?>"
       data-speed="1000"></span>
                     </div>
@@ -25,7 +25,7 @@ if(isset($_SESSION['user'])){
 
                 <div class="col-4">
                     <div class="bg-success text-center text-white p-3 rounded">
-                        <p>Pending Members</p>
+                        <p>categories</p>
                         <span class=" timer display-3" data-from="0" data-to="62"
       data-speed="800"></span>
                     </div>
@@ -38,7 +38,7 @@ if(isset($_SESSION['user'])){
       data-speed="800"></span>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </section>
