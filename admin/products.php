@@ -330,15 +330,191 @@ if(isset($_SESSION['userName'])){
     }
     //edit page////////////////////////////////////////////////////
     elseif($do == 'edit'){
-        echo 'this is edit page';
+                //check if id exict and numeric
+        $proId = isset($_GET['id']) && is_numeric($_GET['id'])? intval($_GET['id']):0; 
+        
+        $stmt = $db->prepare("SELECT * FROM `products` WHERE id=? LIMIT 1 ");
+        $stmt->execute(array($proId));
+        $row = $stmt->fetch();
+        $count = $stmt->rowCount();
+
+        $id = $row['id']; 
+        $title = $row['title']; 
+        $desc = $row['des']; 
+        $price = $row['price']; 
+        $country = $row['country'];
+        $image = $row['image'];
+        $rating = $row['rating'];
+        $status = $row['status'];
+        $reg_status = $row['reg_status'];
+        $cat_name = $row['cat_id'];
+        $user_name = $row['user_id'];
+
+        if($count>0){
+            
+        ?>       
+        <section class=' p-4 text-center' id='addProduct'>
+            <h2 class='text-danger' >Add New Products</h2>
+            <form class="text-dark bg-info mt-3 rounded py-5 w-50 mx-auto " id="adminForm" action="?do=update" method="POST" enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input class="w-50 mx-auto form-control" type="text" name="title" id="title" value='<?= $title ?>'>
+                    <input type="hidden" name= "id" value='<?= $id ?>'>
+                </div>
+
+                <div class="form-group">
+                    <label for="desc">Description</label>
+                    <input class="w-50 mx-auto form-control" type="text" name="desc" id="desc" value='<?= $desc ?>'>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input class="w-50 mx-auto form-control" type="text" name="price" id="price" value='<?= $price ?>'>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select class="w-50 mx-auto form-control" name="country" id="country" >
+                        <option value=""><?= $country ?></option>
+                        <option value="egypt">egypt</option>
+                        <option value="china">china</option>
+                        <option value="france">france</option>
+                        <option value="england">england</option>
+                        <option value="germany">germany</option>
+                    </select> 
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Rating</label>
+                    <select class="w-50 mx-auto form-control" name="rating" id="rating">
+                        <option value="">
+                            <?php
+                            if($rating ==1){echo '*';}
+                            elseif($rating ==2){echo '**';}
+                            elseif($rating ==3){echo '***';}
+                            elseif($rating ==4){echo '****';}
+                            else{echo '*****';}
+                            ?>     
+                        </option>
+                        <option value="1">*</option>
+                        <option value="2">**</option>
+                        <option value="3">***</option>
+                        <option value="4">****</option>
+                        <option value="5">*****</option>
+                    </select>  
+                </div>
+
+                <div class="form-group">
+                    <label for="status">status</label>
+                    <select class="w-50 mx-auto form-control" name="status" id="status">
+                        <option value="">
+                            <?php
+                            if($status ==1){echo 'new';}
+                            elseif($status ==2){echo 'normal';}
+                            else{echo 'old';}
+                            ?>  
+                        </option>
+                        <option value="1">new</option>
+                        <option value="2">normal</option>
+                        <option value="3">old</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reg_status">reg status</label>
+                    <select class="w-50 mx-auto form-control" name="reg_status" id="reg_status">
+                        <option value="">
+                            <?php
+                            if($reg_status ==0){echo 'active';}
+                            else{echo 'not active';}
+                            ?>    
+                        </option>
+                        <option value="0">active</option>
+                        <option value="1">not active</option>
+                    </select>  
+                </div>
+
+                <div class="form-group">
+                    <label for="cat">Category</label>
+                    <select class="w-50 mx-auto form-control" name="cat" id="cat">
+                        <option value=""><?= $cat_name ?></option>
+                        <?php
+                        $stmt2 = $db->prepare("SELECT * FROM `categories`");
+                        $stmt2->execute();
+                        $cats = $stmt2->fetchAll();
+                        foreach($cats as $cat):
+                        ?>
+                        <option value="<?= $cat['id'] ?>"> <?= $cat['name'] ?> </option>
+                        <?php endforeach; ?>
+                    </select>  
+                </div>
+
+                <div class="form-group">
+                    <label for="user">User</label>
+                    <select class="w-50 mx-auto form-control" name="user" id="user">
+                        <option value=""><?= $user_name ?></option>
+                        <?php
+                        $stmt3 = $db->prepare("SELECT * FROM `users`");
+                        $stmt3->execute();
+                        $users = $stmt3->fetchAll();
+                        foreach($users as $user):
+                        ?>
+                        <option value="<?= $user['id'] ?>"> <?= $user['name'] ?> </option>
+                        <?php endforeach; ?>
+                    </select>  
+                </div>
+                
+                <div class="form-group">
+                    <label for="image">image</label>
+                    <input class="w-50 mx-auto form-control" type="file" name="image" id="image" value='<?= $image ?>'>
+                </div>
+
+                <div class="form-group">
+                    <input class="btn btn-secondary text-white px-5" type="submit" value="add">
+                </div>
+            </form>
+        </section>
+    <?php
+        }else{
+            redirect('danger', 'no category found', 'cats.php');
+        }
     }
     // update////////////////////////////////////////////////////////
     elseif($do == 'update'){
-        echo 'this is update page';
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            $id = $_POST['id']; 
+            $title = $_POST['title']; 
+            $desc = $_POST['desc']; 
+            $price = $_POST['price']; 
+            $country = $_POST['country'];
+            
+            $rating = $_POST['rating'];
+            $status = $_POST['status'];
+            $reg_status = $_POST['reg_status'];
+            $cat_name = $_POST['cat'];
+            $user_name = $_POST['user'];
+        
+            $stmt = $db->prepare("UPDATE `products` SET title =? ,des=?, price=?, country=?,  rating=?
+            , status=?, reg_status=?, WHERE id=?");
+            $stmt->execute(array($title,$desc,$price,$country,$rating,$status,$reg_status,$id));
+            
+            redirect( 'success','product updated successfully','products.php',2);
+        }else{
+            redirect('danger','you cant browes this page','products.php',2);
+        }
     }
     //delete page/////////////////////////////////////////////////////////
     elseif($do == 'delete'){
-        echo 'this is delete page';
+        $id = $_GET['id'];
+
+        $stmt =$db->prepare("DELETE FROM `products` WHERE id=:id");
+        $stmt->bindParam(':id' , $id);
+        $stmt->execute();
+            
+        redirect('danger','product Deleted Successfully','products.php',2);
     }
     // approve page /////////////////////////////////////////////////
     elseif($do == 'approve' ){
